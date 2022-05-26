@@ -49,8 +49,6 @@ namespace IngameScript
         List<IMyGasGenerator> gasGeneratorList;
         List<ITerminalAction> gasGeneratorActions;
 
-        bool airVentsDown;
-        bool gasTanksDown;
 
         float LowOxygenAirVent;
         double LowGasTanks;
