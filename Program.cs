@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.IO;
 using VRage;
 using VRage.Collections;
 using VRage.Game;
@@ -70,7 +71,7 @@ namespace IngameScript
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
             LowOxygenAirVent = 0.35f;
-            LowGasTanks = 0.35;
+            LowGasTanks = 0.35f;
 
 
             airVentList = new List<IMyAirVent>();
@@ -92,7 +93,7 @@ namespace IngameScript
 
         public void Main()
         {
-            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, null);
+            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, Func);
             GridTerminalSystem.GetBlocksOfType<IMyGasTank>(gasTankList, null);
             GridTerminalSystem.GetBlocksOfType<IMyGasGenerator>(gasGeneratorList, null);
 
@@ -100,6 +101,7 @@ namespace IngameScript
             {
                 foreach (var gg in gasGeneratorList)
                 {
+                    
                     gg.Enabled = true;
                 }
             }
@@ -112,13 +114,32 @@ namespace IngameScript
             }
         }
 
+        private bool Func(IMyTerminalBlock arg)
+        {
+            if (arg.CustomName.Contains(@"[SUSS]")) return true;
+            return false;
+        }
+
         bool CheckAirVents(List<IMyAirVent> _myAirVents)
         {
             if (_myAirVents.Count == 0) return false;
 
             foreach (var av in _myAirVents)
             {
-                if (av.GetOxygenLevel() <= LowOxygenAirVent) return true;
+                if (av.GetOxygenLevel() <= LowOxygenAirVent)
+                {
+                    string toLog = av.GetOxygenLevel().ToString();
+                    Echo("NEW-OBJECT-DETECTED-------------------------");
+                    Echo("Detected Low AirVent OxygenLevel::" + toLog);
+                    toLog = "CustomName::" + av.CustomName;
+                    Echo(toLog);
+                    toLog = "EntityId::" + av.CubeGrid.EntityId.ToString();
+                    Echo(toLog);
+                    toLog = av.DetailedInfo;
+                    Echo("DetailedInfo::" + toLog);
+                    Echo("--------------------------------------------");
+                    return true;
+                }
             }
 
             return false;
@@ -130,7 +151,20 @@ namespace IngameScript
 
             foreach (var gt in _myGasTanks)
             {
-                if (gt.FilledRatio >= LowGasTanks) return true;
+                if (gt.FilledRatio <= LowGasTanks)
+                {
+                    string toLog = gt.FilledRatio.ToString();
+                    Echo("NEW-OBJECT-DETECTED-------------------------");
+                    Echo("Detected Low GasTank FilledRatio::" + toLog);
+                    toLog = "CustomName::" + gt.CustomName;
+                    Echo(toLog);
+                    toLog = "EntityId::" + gt.CubeGrid.EntityId.ToString();
+                    Echo(toLog);
+                    toLog = gt.DetailedInfo;
+                    Echo("DetailedInfo::" + toLog);
+                    Echo("--------------------------------------------");
+                    return true;
+                }
             }
 
             return false;
@@ -142,7 +176,7 @@ namespace IngameScript
 
             foreach (var av in _myAirVents)
             {
-                if (av.GetOxygenLevel() < 0.99f) return false;
+                if (av.GetOxygenLevel() < 0.9f) return false;
             }
 
             return true;
@@ -155,7 +189,7 @@ namespace IngameScript
 
             foreach (var gt in _myGasTanks)
             {
-                if (gt.FilledRatio < 0.99) return false;
+                if (gt.FilledRatio < 0.9f) return false;
             }
 
             return true;
