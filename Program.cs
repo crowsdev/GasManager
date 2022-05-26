@@ -105,13 +105,12 @@ namespace IngameScript
                     gg.Enabled = true;
                 }
             }
-            else
+            else if (ElseCheckAirVent(airVentList) && ElseCheckGasTank(gasTankList))
             {
                 foreach (var gg in gasGeneratorList)
                 {
                     gg.Enabled = false;
                 }
-
             }
         }
 
@@ -137,6 +136,32 @@ namespace IngameScript
             }
 
             return false;
+        }
+
+        bool ElseCheckAirVent(List<IMyAirVent> _myAirVents)
+        {
+            if (_myAirVents.Count == 0) return false;
+
+            foreach (var av in _myAirVents)
+            {
+                if (av.GetOxygenLevel() < 0.99f) return false;
+            }
+
+            return true;
+
+        }
+
+        bool ElseCheckGasTank(List<IMyGasTank> _myGasTanks)
+        {
+            if (_myGasTanks.Count == 0) return false;
+
+            foreach (var gt in _myGasTanks)
+            {
+                if (gt.FilledRatio < 0.99) return false;
+            }
+
+            return true;
+
         }
     }
 }
