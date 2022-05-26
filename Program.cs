@@ -91,7 +91,7 @@ namespace IngameScript
 
         public void Main()
         {
-            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, Func);
+            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, null);
             GridTerminalSystem.GetBlocksOfType<IMyGasTank>(gasTankList, null);
             GridTerminalSystem.GetBlocksOfType<IMyGasGenerator>(gasGeneratorList, null);
 
