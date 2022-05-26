@@ -72,8 +72,6 @@ namespace IngameScript
             LowOxygenAirVent = 0.35f;
             LowGasTanks = 0.35;
 
-            airVentsDown = false;
-            gasTanksDown = false;
 
             airVentList = new List<IMyAirVent>();
             gasTankList = new List<IMyGasTank>();
@@ -94,9 +92,9 @@ namespace IngameScript
 
         public void Main()
         {
-            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, b => b.CustomName.Contains(@"[Vent]"));
-            GridTerminalSystem.GetBlocksOfType<IMyGasTank>(gasTankList, b => b.CustomName.Contains(@"[Tank]"));
-            GridTerminalSystem.GetBlocksOfType<IMyGasGenerator>(gasGeneratorList, b => b.CustomName.Contains(@"[Gen]"));
+            GridTerminalSystem.GetBlocksOfType<IMyAirVent>(airVentList, null);
+            GridTerminalSystem.GetBlocksOfType<IMyGasTank>(gasTankList, null);
+            GridTerminalSystem.GetBlocksOfType<IMyGasGenerator>(gasGeneratorList, null);
 
             if (CheckAirVents(airVentList) || CheckGasTanks(gasTankList))
             {
@@ -120,7 +118,7 @@ namespace IngameScript
 
             foreach (var av in _myAirVents)
             {
-                if (av.GetOxygenLevel() <= 0.35f) return true;
+                if (av.GetOxygenLevel() <= LowOxygenAirVent) return true;
             }
 
             return false;
@@ -132,7 +130,7 @@ namespace IngameScript
 
             foreach (var gt in _myGasTanks)
             {
-                if (gt.FilledRatio >= 0.35) return true;
+                if (gt.FilledRatio >= LowGasTanks) return true;
             }
 
             return false;
